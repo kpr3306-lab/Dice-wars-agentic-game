@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Dice Wars — Campaign Map</title>
+<link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+
+<div class="topbar">
+  <div class="brand"><span class="dice-glyph">⚄</span> Dice Wars</div>
+  <div class="nav-links">
+    <a href="{{ url_for('index') }}" class="active">Campaign</a>
+    <a href="{{ url_for('instructions') }}">Instructions</a>
+    <a href="{{ url_for('behind_the_scenes') }}">Behind the Scenes</a>
+  </div>
+</div>
+
+<!-- ===================== MAP SELECT ===================== -->
+<div id="map-select-screen" class="map-select-wrap">
+  <div class="map-select">
+    <h2 style="font-family: var(--font-display); font-size: 2.1rem; color: var(--brass-lt); letter-spacing: 0.06em;">
+      Choose Your Theater
+    </h2>
+    <p class="tagline">Three campaign maps. One AI general, built from three cooperating agents, standing against you.</p>
+    <div class="map-grid">
+      {% for map_id, label in maps.items() %}
+      <div class="map-card" data-map-id="{{ map_id }}">
+        <div class="map-thumb">{{ label }}</div>
+        <h3>{{ label.split('(')[0].strip() }}</h3>
+        <p>{{ '(' + label.split('(')[1] if '(' in label else '' }}</p>
+      </div>
+      {% endfor %}
+    </div>
+  </div>
+</div>
+
+<!-- ===================== GAME SCREEN ===================== -->
+<div id="game-screen" class="layout" style="display:none;">
+  <div class="map-panel">
+    <canvas id="board-canvas" width="900" height="640"></canvas>
+  </div>
+
+  <div class="side-panel">
+    <div class="card grain">
+      <h3>Campaign Status</h3>
+      <div id="turn-badge" class="turn-badge human"><span class="dot human"></span> Your Turn</div>
+      <div style="margin-top:10px;">
+        <div class="stat-row"><span>Turn</span><b id="turn-number">1</b></div>
+        <div class="stat-row"><span>Your territories</span><b id="human-count">-</b></div>
+        <div class="stat-row"><span>AI territories</span><b id="ai-count">-</b></div>
+        <div class="stat-row"><span>Your dice</span><b id="human-dice">-</b></div>
+        <div class="stat-row"><span>AI dice</span><b id="ai-dice">-</b></div>
+      </div>
+      <div class="action-row">
+        <button id="end-attack-btn" class="primary">End Attack Phase</button>
+        <button id="new-game-btn" class="ghost">New Game</button>
+      </div>
+      <div id="reinforce-banner" style="display:none; margin-top:10px; font-family: var(--font-mono); font-size:0.8rem;">
+        Reinforcements remaining: <b id="reinforce-pool">0</b> — click your territories to place.
+        <div class="action-row"><button id="skip-reinforce-btn" class="ghost">Auto-place rest</button></div>
+      </div>
+    </div>
+
+    <div class="card grain">
+      <h3>Behind the Scenes — Live</h3>
+      <div id="live-feed" class="feed">
+        <div class="thought strategy"><span class="agent-tag">system</span><div class="headline">Awaiting first move…</div></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div id="battle-overlay" class="battle-overlay">
+  <div class="battle-box">
+    <div class="battle-title" id="battle-title">Territory 3 → Territory 7</div>
+    <div class="dice-rows">
+      <div class="dice-col">
+        <div class="label">Attacker</div>
+        <div class="dice-set" id="attacker-dice"></div>
+      </div>
+      <div class="dice-col">
+        <div class="label">Defender</div>
+        <div class="dice-set" id="defender-dice"></div>
+      </div>
+    </div>
+    <div class="battle-result" id="battle-result"></div>
+  </div>
+</div>
+
+<div id="tooltip" class="tooltip"></div>
+
+<div id="winner-banner" class="winner-banner">
+  <h1 id="winner-title">Victory</h1>
+  <button id="play-again-btn" class="primary">Play Again</button>
+</div>
+
+<script src="https://cdn.socket.io/4.7.5/socket.io.min.js"></script>
+<script src="{{ url_for('static', filename='js/board_renderer.js') }}"></script>
+<script src="{{ url_for('static', filename='js/animations.js') }}"></script>
+<script src="{{ url_for('static', filename='js/main.js') }}"></script>
+</body>
+</html>

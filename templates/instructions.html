@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Instructions — Dice Wars</title>
+<link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+
+<div class="topbar">
+  <div class="brand"><span class="dice-glyph">⚄</span> Dice Wars</div>
+  <div class="nav-links">
+    <a href="{{ url_for('index') }}">Campaign</a>
+    <a href="{{ url_for('instructions') }}" class="active">Instructions</a>
+    <a href="{{ url_for('behind_the_scenes') }}">Behind the Scenes</a>
+  </div>
+</div>
+
+<div class="doc-wrap">
+  <div class="card grain">
+    <div class="eyebrow" style="color:#8c6a2f;">The Objective</div>
+    <h2>Conquer the map</h2>
+    <p>Dice Wars is a territory-control game. The map is split between you (wax-seal red) and the AI general
+       (steel blue). On your turn, attack adjacent enemy territories using dice. Win enough battles and control
+       the whole map — or simply hold more territory than the AI when the campaign settles.</p>
+  </div>
+
+  <div class="card grain">
+    <div class="eyebrow" style="color:#8c6a2f;">Combat</div>
+    <h2>How an attack works</h2>
+    <p>Every territory holds 1–8 dice. To attack, click one of your territories with 2+ dice, then click an
+       adjacent enemy territory. All of your attacker's dice are rolled against all of the defender's dice —
+       highest total wins.</p>
+    <p><b>If you win:</b> the defender's territory becomes yours. All but one of your attacking dice move in
+       to occupy it. <b>If you lose:</b> your attacking territory is left with just 1 die, and the defender is
+       untouched. Either way, only a territory with 2+ dice can attack, so a losing attack takes you out of
+       action there until you reinforce.</p>
+  </div>
+
+  <div class="card grain">
+    <div class="eyebrow" style="color:#8c6a2f;">Reinforcements</div>
+    <h2>Rebuilding your line</h2>
+    <p>When you're done attacking for the turn, click <b>End Attack Phase</b>. You receive one reinforcement
+       die for every territory in your <i>largest connected group</i> — so keeping your holdings linked up
+       matters as much as their number. Click your own territories to place dice one at a time (max 8 per
+       territory), or use <b>Auto-place rest</b> to let the game distribute what's left to your most exposed
+       borders.</p>
+  </div>
+
+  <div class="card grain">
+    <div class="eyebrow" style="color:#8c6a2f;">The Opponent</div>
+    <h2>You're not playing a script</h2>
+    <p>The AI general is a small pipeline of three cooperating agents — one sets the turn's overall strategy,
+       one executes attacks, one places reinforcements. Watch the <b>Behind the Scenes — Live</b> panel during
+       play to see its reasoning in real time, or visit the <a href="{{ url_for('behind_the_scenes') }}">Behind
+       the Scenes</a> page for the full architecture.</p>
+  </div>
+
+  <div class="card grain">
+    <div class="eyebrow" style="color:#8c6a2f;">Maps</div>
+    <h2>Three theaters</h2>
+    <p><b>Skirmish Isle</b> is small and fast — good for learning the flow. <b>Twin Peninsulas</b> is a
+       mid-sized map with natural choke points. <b>Grand Continent</b> is a sprawling 40-territory campaign
+       for longer games. All three are generated as organic landmasses, not a grid of nodes, so borders and
+       choke points actually matter.</p>
+  </div>
+</div>
+
+</body>
+</html>

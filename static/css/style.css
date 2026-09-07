@@ -1,0 +1,429 @@
+/* =========================================================
+   Dice Wars — "War Room" design system
+   Ink-navy campaign room, parchment panels, wax-seal armies.
+   ========================================================= */
+
+@import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@500;700&family=Spectral:ital,wght@0,400;0,500;0,600;1,400&family=JetBrains+Mono:wght@400;600&display=swap');
+
+:root {
+  /* --- palette --- */
+  --ink-navy:      #171c26;
+  --ink-navy-2:    #1f2634;
+  --ink-navy-3:    #262f42;
+  --parchment:     #eee3cd;
+  --parchment-dim: #d9c9a8;
+  --seal-red:      #8c3a3a;
+  --seal-red-lt:   #b25050;
+  --steel-blue:    #3f6b80;
+  --steel-blue-lt: #5c8ca3;
+  --brass:         #c39a3f;
+  --brass-lt:      #e0bb63;
+  --ink-line:      #100d0a;
+  --success-green: #5c7a4f;
+
+  /* --- type --- */
+  --font-display: 'Cinzel', serif;
+  --font-body: 'Spectral', serif;
+  --font-mono: 'JetBrains Mono', monospace;
+
+  --radius: 3px;
+  --shadow-deep: 0 10px 30px rgba(0,0,0,0.45);
+}
+
+* { box-sizing: border-box; }
+
+html, body {
+  margin: 0;
+  padding: 0;
+  min-height: 100vh;
+  background:
+    radial-gradient(ellipse at 20% 0%, #1b2231 0%, transparent 60%),
+    radial-gradient(ellipse at 80% 100%, #1b2231 0%, transparent 55%),
+    var(--ink-navy);
+  color: var(--parchment);
+  font-family: var(--font-body);
+  font-size: 16px;
+  line-height: 1.5;
+}
+
+::selection { background: var(--brass); color: var(--ink-navy); }
+
+a { color: var(--brass-lt); }
+
+/* subtle paper-grain overlay used on parchment panels */
+.grain {
+  position: relative;
+}
+.grain::before {
+  content: "";
+  position: absolute; inset: 0;
+  pointer-events: none;
+  opacity: 0.06;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  mix-blend-mode: multiply;
+}
+
+/* =========================================================
+   Top bar
+   ========================================================= */
+.topbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 14px 28px;
+  background: linear-gradient(180deg, var(--ink-navy-2), var(--ink-navy));
+  border-bottom: 1px solid rgba(195,154,63,0.25);
+}
+
+.brand {
+  font-family: var(--font-display);
+  letter-spacing: 0.12em;
+  font-size: 1.35rem;
+  color: var(--brass-lt);
+  text-transform: uppercase;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.brand .dice-glyph {
+  width: 22px; height: 22px;
+  border: 2px solid var(--brass-lt);
+  border-radius: 4px;
+  display: inline-flex; align-items: center; justify-content: center;
+  font-family: var(--font-mono);
+  font-size: 0.8rem;
+}
+
+.nav-links { display: flex; gap: 18px; }
+.nav-links a {
+  font-family: var(--font-mono);
+  font-size: 0.78rem;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  color: var(--parchment-dim);
+  text-decoration: none;
+  padding: 6px 10px;
+  border: 1px solid transparent;
+  border-radius: var(--radius);
+  transition: border-color .15s, color .15s;
+}
+.nav-links a:hover { color: var(--brass-lt); border-color: rgba(195,154,63,0.4); }
+.nav-links a.active { color: var(--brass-lt); border-color: var(--brass); }
+
+/* =========================================================
+   Layout
+   ========================================================= */
+.layout {
+  display: grid;
+  grid-template-columns: 1fr 340px;
+  gap: 18px;
+  padding: 18px 22px 26px;
+  max-width: 1500px;
+  margin: 0 auto;
+}
+@media (max-width: 980px) {
+  .layout { grid-template-columns: 1fr; }
+}
+
+.map-panel {
+  background:
+    radial-gradient(ellipse at 50% 0%, #212a3d 0%, var(--ink-navy-2) 70%);
+  border: 1px solid rgba(195,154,63,0.22);
+  border-radius: 6px;
+  box-shadow: var(--shadow-deep);
+  padding: 14px;
+  position: relative;
+  overflow: hidden;
+}
+
+#board-canvas { width: 100%; height: auto; display: block; cursor: default; touch-action: none; }
+
+.side-panel {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+/* =========================================================
+   Parchment cards
+   ========================================================= */
+.card {
+  background: var(--parchment);
+  color: #2b2013;
+  border-radius: var(--radius);
+  box-shadow: var(--shadow-deep);
+  padding: 16px 18px;
+  position: relative;
+}
+.card h2, .card h3 {
+  font-family: var(--font-display);
+  margin: 0 0 8px;
+  color: #3a2b16;
+  letter-spacing: 0.03em;
+}
+.card h3 { font-size: 0.95rem; text-transform: uppercase; }
+
+.turn-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-family: var(--font-mono);
+  font-size: 0.85rem;
+  padding: 6px 10px;
+  border-radius: 3px;
+  border: 1px solid rgba(0,0,0,0.15);
+}
+.turn-badge.human { background: rgba(140,58,58,0.12); border-color: var(--seal-red); }
+.turn-badge.ai { background: rgba(63,107,128,0.12); border-color: var(--steel-blue); }
+
+.dot { width: 10px; height: 10px; border-radius: 50%; display: inline-block; }
+.dot.human { background: var(--seal-red); }
+.dot.ai { background: var(--steel-blue); }
+
+.stat-row { display: flex; justify-content: space-between; font-family: var(--font-mono); font-size: 0.82rem; margin: 4px 0; }
+.stat-row b { color: #3a2b16; }
+
+button {
+  font-family: var(--font-mono);
+  font-size: 0.78rem;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  padding: 9px 14px;
+  border-radius: var(--radius);
+  border: 1px solid var(--ink-line);
+  background: var(--ink-navy);
+  color: var(--parchment);
+  cursor: pointer;
+  transition: transform .1s ease, background .15s;
+}
+button:hover:not(:disabled) { background: var(--ink-navy-3); transform: translateY(-1px); }
+button:disabled { opacity: 0.4; cursor: not-allowed; }
+button.primary { background: var(--seal-red); border-color: #5e2626; }
+button.primary:hover:not(:disabled) { background: var(--seal-red-lt); }
+button.ghost { background: transparent; border-color: #3a2b16; color: #3a2b16; }
+
+.action-row { display: flex; gap: 8px; margin-top: 10px; flex-wrap: wrap; }
+
+/* =========================================================
+   Log / behind-the-scenes feed
+   ========================================================= */
+.feed {
+  max-height: 260px;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding-right: 4px;
+}
+.feed::-webkit-scrollbar { width: 6px; }
+.feed::-webkit-scrollbar-thumb { background: var(--parchment-dim); border-radius: 3px; }
+
+.thought {
+  border-left: 3px solid var(--brass);
+  padding: 6px 10px;
+  background: rgba(0,0,0,0.035);
+  border-radius: 0 3px 3px 0;
+  animation: slideIn .25s ease;
+}
+.thought.strategy { border-left-color: var(--brass); }
+.thought.attack { border-left-color: var(--seal-red); }
+.thought.defense { border-left-color: var(--steel-blue); }
+.thought .agent-tag {
+  font-family: var(--font-mono);
+  font-size: 0.65rem;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  opacity: 0.65;
+}
+.thought .headline { font-weight: 600; font-size: 0.85rem; margin: 2px 0; }
+.thought .detail { font-size: 0.78rem; opacity: 0.85; }
+
+@keyframes slideIn {
+  from { opacity: 0; transform: translateX(-6px); }
+  to { opacity: 1; transform: translateX(0); }
+}
+
+/* =========================================================
+   Dice battle overlay
+   ========================================================= */
+.battle-overlay {
+  position: fixed; inset: 0;
+  background: rgba(10,12,18,0.72);
+  display: flex; align-items: center; justify-content: center;
+  z-index: 50;
+  opacity: 0; pointer-events: none;
+  transition: opacity .2s ease;
+}
+.battle-overlay.show { opacity: 1; pointer-events: all; }
+
+.battle-box {
+  background: var(--parchment);
+  border-radius: 6px;
+  padding: 26px 34px;
+  min-width: 420px;
+  box-shadow: var(--shadow-deep);
+  color: #2b2013;
+  text-align: center;
+}
+.battle-title { font-family: var(--font-display); letter-spacing: 0.05em; margin-bottom: 14px; }
+
+.dice-rows { display: flex; justify-content: space-between; gap: 24px; margin: 18px 0; }
+.dice-col { flex: 1; }
+.dice-col .label { font-family: var(--font-mono); font-size: 0.72rem; text-transform: uppercase; margin-bottom: 8px; opacity: 0.7; }
+.dice-set { display: flex; justify-content: center; gap: 6px; flex-wrap: wrap; }
+
+.die {
+  width: 34px; height: 34px;
+  background: #fff;
+  border: 2px solid var(--ink-line);
+  border-radius: 6px;
+  display: flex; align-items: center; justify-content: center;
+  font-family: var(--font-mono); font-weight: 700; font-size: 1rem;
+  box-shadow: 0 3px 0 rgba(0,0,0,0.25);
+  animation: tumble 0.55s ease-out;
+}
+@keyframes tumble {
+  0% { transform: rotate(0deg) scale(0.4); opacity: 0; }
+  60% { transform: rotate(380deg) scale(1.12); opacity: 1; }
+  100% { transform: rotate(360deg) scale(1); }
+}
+.die.attacker { border-color: var(--seal-red); color: var(--seal-red); }
+.die.defender { border-color: var(--steel-blue); color: var(--steel-blue); }
+
+.battle-result {
+  margin-top: 12px;
+  font-family: var(--font-mono);
+  font-size: 0.95rem;
+  padding: 8px;
+  border-radius: 3px;
+  opacity: 0;
+  transition: opacity .25s ease;
+}
+.battle-result.show { opacity: 1; }
+.battle-result.win { background: rgba(92,122,79,0.18); color: #3d5433; }
+.battle-result.lose { background: rgba(140,58,58,0.15); color: #6b2b2b; }
+
+/* =========================================================
+   Territory tooltip
+   ========================================================= */
+.tooltip {
+  position: fixed;
+  pointer-events: none;
+  background: var(--ink-navy);
+  color: var(--parchment);
+  border: 1px solid var(--brass);
+  padding: 6px 10px;
+  border-radius: 3px;
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  z-index: 40;
+  opacity: 0;
+  transition: opacity .1s;
+  white-space: nowrap;
+}
+.tooltip.show { opacity: 1; }
+
+.winner-banner {
+  position: fixed; inset: 0;
+  background: rgba(10,12,18,0.85);
+  display: flex; align-items: center; justify-content: center;
+  z-index: 60; opacity: 0; pointer-events: none;
+  transition: opacity .3s;
+  flex-direction: column;
+  text-align: center;
+}
+.winner-banner.show { opacity: 1; pointer-events: all; }
+.winner-banner h1 {
+  font-family: var(--font-display);
+  font-size: 3rem;
+  color: var(--brass-lt);
+  letter-spacing: 0.08em;
+  margin-bottom: 18px;
+}
+
+/* =========================================================
+   Map select screen
+   ========================================================= */
+.map-select-wrap {
+  min-height: calc(100vh - 64px);
+  display: flex; align-items: center; justify-content: center;
+  padding: 40px 20px;
+}
+.map-select {
+  max-width: 900px;
+  text-align: center;
+}
+.map-select > p.tagline {
+  font-family: var(--font-body);
+  font-style: italic;
+  color: var(--parchment-dim);
+  margin-bottom: 34px;
+  font-size: 1.05rem;
+}
+.map-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 20px;
+}
+@media (max-width: 760px) { .map-grid { grid-template-columns: 1fr; } }
+
+.map-card {
+  background: var(--parchment);
+  border-radius: 6px;
+  padding: 20px;
+  cursor: pointer;
+  box-shadow: var(--shadow-deep);
+  border: 2px solid transparent;
+  transition: border-color .15s, transform .15s;
+  color: #2b2013;
+  text-align: left;
+}
+.map-card:hover { border-color: var(--brass); transform: translateY(-3px); }
+.map-card .map-thumb {
+  height: 110px; border-radius: 4px; margin-bottom: 12px;
+  background: linear-gradient(135deg, #d9c9a8, #c8b78e);
+  display: flex; align-items: center; justify-content: center;
+  font-family: var(--font-mono); font-size: 0.7rem; color: #6b5a3a; letter-spacing: 0.06em;
+}
+.map-card h3 { margin: 0 0 6px; font-family: var(--font-display); font-size: 1.05rem; }
+.map-card p { margin: 0; font-size: 0.82rem; color: #5a4a30; }
+
+/* =========================================================
+   Static pages (instructions / behind the scenes)
+   ========================================================= */
+.doc-wrap {
+  max-width: 880px;
+  margin: 0 auto;
+  padding: 36px 24px 70px;
+}
+.doc-wrap .card { margin-bottom: 18px; }
+.doc-wrap h2 { font-size: 1.6rem; }
+.doc-wrap p { line-height: 1.65; }
+.doc-wrap .eyebrow {
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--brass-lt);
+  margin-bottom: 6px;
+}
+.pipeline-diagram {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+  margin: 18px 0;
+}
+.pipeline-node {
+  background: var(--ink-navy-3);
+  border: 1px solid var(--brass);
+  border-radius: 4px;
+  padding: 10px 14px;
+  font-family: var(--font-mono);
+  font-size: 0.78rem;
+  color: var(--brass-lt);
+  flex: 1;
+  min-width: 150px;
+  text-align: center;
+}
+.pipeline-arrow { color: var(--brass); font-size: 1.3rem; }

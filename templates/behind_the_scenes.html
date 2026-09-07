@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Behind the Scenes — Dice Wars</title>
+<link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+
+<div class="topbar">
+  <div class="brand"><span class="dice-glyph">⚄</span> Dice Wars</div>
+  <div class="nav-links">
+    <a href="{{ url_for('index') }}">Campaign</a>
+    <a href="{{ url_for('instructions') }}">Instructions</a>
+    <a href="{{ url_for('behind_the_scenes') }}" class="active">Behind the Scenes</a>
+  </div>
+</div>
+
+<div class="doc-wrap">
+  <div class="card grain">
+    <div class="eyebrow" style="color:#8c6a2f;">Architecture</div>
+    <h2>The AI general is three agents wearing one coat</h2>
+    <p>From your side of the table there is one opponent. Underneath, each of its turns runs a fixed
+       hierarchical pipeline: a <b>Strategy Agent</b> sets the turn's posture, an <b>Attack Agent</b> executes
+       moves under that posture, and a <b>Defense Agent</b> places reinforcements once attacking stops. Each
+       agent hands its output to the next — this is deliberately a pipeline, not three bots acting
+       independently, because a coordinated single opponent is a stronger design than three competing scripts.</p>
+    <div class="pipeline-diagram">
+      <div class="pipeline-node">Strategy Agent<br><small>sets the turn's goal</small></div>
+      <div class="pipeline-arrow">→</div>
+      <div class="pipeline-node">Attack Agent<br><small>executes under that goal</small></div>
+      <div class="pipeline-arrow">→</div>
+      <div class="pipeline-node">Defense Agent<br><small>places reinforcements</small></div>
+    </div>
+  </div>
+
+  <div class="card grain">
+    <div class="eyebrow" style="color:#8c6a2f;">Strategy Agent</div>
+    <h2>Reading the board</h2>
+    <p>Runs once at the start of every AI turn. It compares total dice on each side, checks how exposed the
+       AI's border is (territories at 1–2 dice next to the human), and checks how fragmented the AI's
+       territory is. From that it picks one posture for the turn:</p>
+    <p><b>EXPAND</b> when it holds a clear dice advantage · <b>DEFEND</b> when its border is dangerously thin ·
+       <b>CONSOLIDATE</b> when its territory is too fragmented to benefit from more expansion ·
+       <b>TARGET_WEAK</b> as the default even-fight posture, hunting the single best-odds attack.</p>
+  </div>
+
+  <div class="card grain">
+    <div class="eyebrow" style="color:#8c6a2f;">Attack Agent</div>
+    <h2>Scoring every legal move</h2>
+    <p>Enumerates every territory the AI can legally attack from, and for each one runs a Monte-Carlo
+       simulation (400 trials of rolling both dice pools) to estimate a real win probability rather than
+       relying on a fixed odds table. Moves are filtered against a minimum win-probability threshold that
+       depends on the current posture — DEFEND only takes near-certain fights (≥85%), while EXPAND will take
+       reasonable trades (≥55%) to keep momentum. Among the moves that clear the bar, it favors the one that
+       best fits the posture: weakest defender for TARGET_WEAK, most border-opening for EXPAND.</p>
+  </div>
+
+  <div class="card grain">
+    <div class="eyebrow" style="color:#8c6a2f;">Defense Agent</div>
+    <h2>Reinforcing the line</h2>
+    <p>Once the Attack Agent stops (either it ran out of good attacks or hit the posture's attack cap), the
+       reinforcement pool is fixed — one die per territory in the AI's largest connected group. The Defense
+       Agent distributes that pool one die at a time, always to the territory with the highest
+       <i>vulnerability score</i> (total enemy dice threatening it, minus its own current dice), which keeps
+       reinforcement concentrated on the border under the most pressure rather than spread evenly.</p>
+  </div>
+
+  <div class="card grain">
+    <div class="eyebrow" style="color:#8c6a2f;">Why a pipeline instead of independent bots</div>
+    <h2>Coordination over competition</h2>
+    <p>Three independent agents making unrelated decisions can easily contradict each other — for example,
+       an attack agent overextending right before a defense agent has no reinforcement bonus left to cover it.
+       Feeding the strategy goal downward means every agent's decision that turn is working toward the same
+       read of the board, which is what "multi-agent system" should mean here: agents that hand off
+       state and reasoning to each other, not just three separate scripts that happen to move the same pieces.</p>
+  </div>
+</div>
+
+</body>
+</html>
